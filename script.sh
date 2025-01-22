@@ -1,13 +1,13 @@
 #!/bin/bash
 
-network_id="172.16"
+network_id="10.10"
 number_of_teams=10
 host_ids=(10 20 30 40 50)
 admins=("admin1" "admin2" "admin3")
 default_password="Password1!"
 backdoor_password="yuh"
 IPs=()
-timeout_duration=2
+timeout_duration=1
 scoring_link="https://..."
 backdoor_link="https://drive.usercontent.google.com/download?id=1N_yXow9zudcE48qK1vUsuJPJZOSVMvGh&export=download&authuser=0"
 
