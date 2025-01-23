@@ -1,5 +1,7 @@
 sudo apt install git sshpass curl -y
-sudo git clone https://github.com/sawyer3399/scripts.git
-sudo cd scripts
+new terminal tab
+sudo git clone https://github.com/sawyer3399/x.git
+sudo cd x
 sudo chmod +x script.sh
 sudo ./script.sh
+
