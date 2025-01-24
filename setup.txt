@@ -1,4 +1,4 @@
-sudo apt install git sshpass curl -y
+sudo apt install git sshpass -y
 new terminal tab
 sudo git clone https://github.com/sawyer3399/x.git
 sudo cd x
