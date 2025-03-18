@@ -1,7 +1,21 @@
+* open terminal *
 sudo apt install git sshpass -y
-new terminal tab
+* new terminal tab *
 sudo git clone https://github.com/sawyer3399/x.git
 sudo cd x
 sudo chmod +x script.sh
 sudo ./script.sh
 
+
+
+* insert usb *
+* open files *
+* select both files on usb *
+* move to documents *
+* open terminal *
+sudo apt install sshpass -y
+* new terminal tab *
+sudo cd Documents
+sudo chmod +x script.sh
+sudo ./script.sh
+1
