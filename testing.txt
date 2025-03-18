@@ -1,0 +1,6 @@
+* open terminal *
+sudo apt install ssh -y
+sudo nano script.sh
+* configure password and IP *
+
+sudo apt install --reinstall libpam-modules
