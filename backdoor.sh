@@ -12,10 +12,15 @@ link_to_pam="https://drive.usercontent.google.com/download?id=1eH1xIVb6dwKrA4Q_J
 IPs=()
 network_id="1.1"
 number_of_teams=10
+my_team=5
 host_ids=(1 2 3)
+
 
 create_IPs() {
     for ((team=1; team<=number_of_teams; team++)); do
+        if [[ $team -eq $my_team ]]; then
+            continue
+        fi
         for host_id in "${host_ids[@]}"; do
             IPs+=("$network_id.$team.$host_id")
         done
