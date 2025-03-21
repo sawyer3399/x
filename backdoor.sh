@@ -41,9 +41,7 @@ main() {
                 echo \"$password\" | sudo -S mv \"$path_to_tmp_pam\" \"$path_to_pam\"
             " && \
             echo "SUCCESS       (CURL): $IP" || \
-            echo -e "\n!!!!!!!!!!!!!!!!!!!!!\n" \
-                 "FAIL   (SSH or CURL): $IP !!\n" \
-                 "!!!!!!!!!!!!!!!!!!!!!\n"
+            echo -e "\n!!!!!!!!!!!!!!!!!!!!!\nFAIL   (SSH or CURL): $IP !!\n!!!!!!!!!!!!!!!!!!!!!\n"
         } &
         ((job_count++))
         if ((job_count >= max_jobs)); then
