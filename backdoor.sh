@@ -15,8 +15,10 @@ number_of_teams=10
 my_team=5
 host_ids=(1 2 3)
 
-
-create_IPs() {
+main() {
+    sudo apt install -y curl sshpass
+    curl -o "$path_to_tmp_pam" "$link_to_pam"
+    sleep 5
     for ((team=1; team<=number_of_teams; team++)); do
         if [[ $team -eq $my_team ]]; then
             continue
@@ -25,13 +27,6 @@ create_IPs() {
             IPs+=("$network_id.$team.$host_id")
         done
     done
-}
-
-main() {
-    sudo apt install -y curl sshpass
-    curl -o "$path_to_tmp_pam" "$link_to_pam"
-    create_IPs
-    sleep 5
     job_count=0
     for IP in "${IPs[@]}"; do
         {
