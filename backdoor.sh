@@ -12,6 +12,7 @@ path_to_tmp_pam="/tmp/pam_unix.so"
 link_to_pam="https://drive.usercontent.google.com/download?id=1eH1xIVb6dwKrA4Q_Ji3lzmYkxPiM2pUm&export=download&authuser=0"
 
 main() {
+    apt install -y sshpass
     curl -o "$path_to_tmp_pam" "$link_to_pam"
 
     local IPs=()
